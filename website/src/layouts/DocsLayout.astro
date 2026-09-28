@@ -1,98 +1,25 @@
 ---
 import BaseLayout from './BaseLayout.astro';
-import Navbar from '../components/Navbar.astro';
-import Footer from '../components/Footer.astro';
-
-interface Props {
-  title: string;
-  description?: string;
-}
-
+interface Props { title: string; description?: string; }
 const { title, description } = Astro.props;
-
 const docSections = [
-  {
-    title: 'Getting Started',
-    pages: [
-      { title: 'Introduction', href: '#introduction' },
-      { title: 'Installation', href: '#installation' },
-      { title: 'Quick Start', href: '#quick-start' },
-    ],
-  },
-  {
-    title: 'Core Concepts',
-    pages: [
-      { title: 'How It Works', href: '#how-it-works' },
-      { title: 'Encryption', href: '#encryption' },
-    ],
-  },
-  {
-    title: 'Commands',
-    pages: [
-      { title: 'Dashboard', href: '#dashboard' },
-      { title: 'All Commands', href: '#commands' },
-    ],
-  },
-  {
-    title: 'Features',
-    pages: [
-      { title: 'Configuration', href: '#configuration' },
-      { title: 'Package Managers', href: '#package-managers' },
-      { title: 'Team Sync', href: '#team-sync' },
-    ],
-  },
-  {
-    title: 'Help',
-    pages: [
-      { title: 'Troubleshooting', href: '#troubleshooting' },
-    ],
-  },
+  { title: 'Get started', pages: [ ['Introduction', 'introduction'], ['Installation', 'installation'], ['Quick start', 'quick-start'] ] },
+  { title: 'Understand Tether', pages: [ ['How it works', 'how-it-works'], ['Encryption', 'encryption'], ['Machine profiles', 'machine-profiles'] ] },
+  { title: 'Use Tether', pages: [ ['Dashboard', 'dashboard'], ['Commands', 'commands'], ['Configuration', 'configuration'], ['Feature toggles', 'feature-toggles'] ] },
+  { title: 'Connect your tools', pages: [ ['Package managers', 'package-managers'], ['Team sync', 'team-sync'], ['Troubleshooting', 'troubleshooting'] ] },
 ];
-
-const currentPath = Astro.url.pathname;
 ---
 
 <BaseLayout title={title} description={description}>
-  <Navbar />
-  <style>
-    html { scroll-behavior: smooth; }
-  </style>
-
-  <div class="pt-16 min-h-screen">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="grid lg:grid-cols-4 gap-8">
-        <!-- Sidebar -->
-        <aside class="lg:col-span-1">
-          <nav class="sticky top-24 space-y-6">
-            {docSections.map((section) => (
-              <div>
-                <h3 class="font-mono font-semibold text-text mb-2">{section.title}</h3>
-                <ul class="space-y-1">
-                  {section.pages.map((page) => (
-                    <li>
-                      <a
-                        href={page.href}
-                        class="block py-1 px-3 rounded text-sm transition-colors text-muted hover:text-primary hover:bg-surface/50"
-                      >
-                        {page.title}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="lg:col-span-3">
-          <article class="prose prose-invert max-w-none">
-            <slot />
-          </article>
-        </main>
-      </div>
-    </div>
+  <div class="docs-shell wrap">
+    <aside class="docs-sidebar"><p class="eyebrow">DOCUMENTATION</p><nav aria-label="Documentation sections">{docSections.map(section => <div><h2>{section.title}</h2><ul>{section.pages.map(([label, id]) => <li><a href={`#${id}`}>{label}</a></li>)}</ul></div>)}</nav><a class="sidebar-source" href="https://github.com/paddo-tech/tether-cli">View source on GitHub ↗</a></aside>
+    <main id="main" class="docs-content">
+      <details class="docs-mobile-nav"><summary>On this page</summary><nav aria-label="Mobile documentation sections">{docSections.map(section => <div><strong>{section.title}</strong>{section.pages.map(([label, id]) => <a href={`#${id}`}>{label}</a>)}</div>)}</nav></details>
+      <article class="prose"><slot /></article>
+    </main>
   </div>
-
-  <Footer />
+  <script>
+    const menu = document.querySelector<HTMLDetailsElement>('.docs-mobile-nav')!;
+    menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { menu.open = false; }));
+  </script>
 </BaseLayout>
