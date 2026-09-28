@@ -1,0 +1,14 @@
+---
+import Icon from './Icon.astro';
+---
+
+<figure class="team-diagram diagram" aria-label="A team repository shares an encrypted project file with two approved recipients">
+  <div class="diagram-label"><span>ONE PROJECT. SHARED CONTEXT.</span><Icon name="lock" size={14} /></div>
+  <div class="team-repo"><div class="flow-icon"><Icon name="git" size={27} /></div><div><strong>Your team repo</strong><span>.env.age · Encrypted for recipients</span></div></div>
+  <div class="team-branches" aria-hidden="true"></div>
+  <div class="team-recipients">
+    <div><Icon name="laptop" size={30} /><strong>Your machine</strong><span><Icon name="key" size={13} /> Your private key</span><code>.env</code></div>
+    <div><Icon name="monitor" size={30} /><strong>Teammate’s machine</strong><span><Icon name="key" size={13} /> Their private key</span><code>.env</code></div>
+  </div>
+  <figcaption class="diagram-caption">Each recipient uses their own key to decrypt the file.</figcaption>
+</figure>

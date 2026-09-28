@@ -1,71 +1,29 @@
 ---
-const navItems = [
-  { name: 'Docs', href: '/docs' },
-  { name: 'Teams', href: '/teams' },
-  { name: 'Security', href: '/security' },
-  { name: 'GitHub', href: 'https://github.com/paddo-tech/tether-cli', external: true },
-];
+import Icon from './Icon.astro';
+const links = [{ label: 'Docs', href: '/docs' }, { label: 'Teams', href: '/teams' }, { label: 'Security', href: '/security' }];
+const currentPath = Astro.url.pathname.replace(/\/$/, '');
 ---
 
-<nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/80 border-b border-surface">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
-      <!-- Logo -->
-      <a href="/" class="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-        <img src="/logo.svg" alt="Tether CLI" class="h-8" />
-      </a>
-
-      <!-- Desktop Nav -->
-      <div class="hidden md:flex items-center space-x-8">
-        {navItems.map((item) => (
-          <a
-            href={item.href}
-            class="text-muted hover:text-primary transition-colors font-mono text-sm"
-            target={item.external ? '_blank' : undefined}
-            rel={item.external ? 'noopener noreferrer' : undefined}
-          >
-            {item.name}
-            {item.external && <span class="ml-1">↗</span>}
-          </a>
-        ))}
-      </div>
-
-      <!-- Mobile Menu Button -->
-      <button
-        id="mobile-menu-button"
-        class="md:hidden p-2 text-muted hover:text-primary transition-colors"
-        aria-label="Toggle menu"
-      >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
-    </div>
+<header class="site-header wrap">
+  <a class="wordmark" href="/" aria-label="Tether home"><Icon name="link" size={29} /><span>tether<span class="cli-label">CLI</span></span></a>
+  <nav class="desktop-nav" aria-label="Main navigation">{links.map(link => <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>{link.label}</a>)}</nav>
+  <div class="nav-actions">
+    <button class="theme-toggle" aria-label="Switch to dark mode"><span class="sun"><Icon name="sun" size={19} /></span><span class="moon"><Icon name="moon" size={19} /></span></button>
+    <a class="github-link" href="https://github.com/paddo-tech/tether-cli">GitHub <span>↗</span></a>
+    <details class="mobile-nav"><summary aria-label="Navigation menu"><span></span><span></span></summary><nav aria-label="Mobile navigation">{links.map(link => <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>{link.label}</a>)}<a href="https://github.com/paddo-tech/tether-cli">GitHub ↗</a></nav></details>
   </div>
-
-  <!-- Mobile Menu -->
-  <div id="mobile-menu" class="hidden md:hidden border-t border-surface">
-    <div class="px-4 py-4 space-y-3">
-      {navItems.map((item) => (
-        <a
-          href={item.href}
-          class="block text-muted hover:text-primary transition-colors font-mono text-sm py-2"
-          target={item.external ? '_blank' : undefined}
-          rel={item.external ? 'noopener noreferrer' : undefined}
-        >
-          {item.name}
-          {item.external && <span class="ml-1">↗</span>}
-        </a>
-      ))}
-    </div>
-  </div>
-</nav>
+</header>
 
 <script>
-  const button = document.getElementById('mobile-menu-button');
-  const menu = document.getElementById('mobile-menu');
-
-  button?.addEventListener('click', () => {
-    menu?.classList.toggle('hidden');
+  const button = document.querySelector<HTMLButtonElement>('.theme-toggle')!;
+  function updateLabel() {
+    button.setAttribute('aria-label', `Switch to ${document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'} mode`);
+  }
+  updateLabel();
+  button.addEventListener('click', () => {
+    const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('tether-theme', theme);
+    updateLabel();
   });
 </script>

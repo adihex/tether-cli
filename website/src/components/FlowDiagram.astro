@@ -1,0 +1,17 @@
+---
+import Icon from './Icon.astro';
+interface Props {
+  label: string;
+  caption: string;
+  steps: { icon: 'file' | 'lock' | 'git' | 'key' | 'laptop' | 'check'; title: string; detail: string }[];
+}
+const { label, caption, steps } = Astro.props;
+---
+
+<figure class="flow-diagram diagram" aria-label={label}>
+  <div class="diagram-label"><span>{label}</span><Icon name="arrow" size={15} /></div>
+  <ol class="flow-nodes">
+    {steps.map(step => <li><div class="flow-icon"><Icon name={step.icon} size={26} /></div><strong>{step.title}</strong><span>{step.detail}</span></li>)}
+  </ol>
+  <figcaption class="diagram-caption">{caption}</figcaption>
+</figure>

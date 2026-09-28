@@ -1,0 +1,132 @@
+---
+import favicon from '../../assets/favicon.svg?url&no-inline';
+const directions = [
+  { id: 'relay', name: 'Relay', detail: 'A clear view of every connection.', color: '#3568df' },
+  { id: 'current', name: 'Current', detail: 'Your familiar setup, wherever you work.', color: '#9366d5' },
+  { id: 'workbench', name: 'Workbench', detail: 'A practical tool for your daily work.', color: '#448368' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Tether — Design options</title>
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="/">tether<span> / Design options</span></a>
+      <a id="open-design" href="/designs/relay" target="_blank" rel="noopener">Open full page ↗</a>
+    </header>
+    <main>
+      <div class="intro"><div><p class="eyebrow">MARKETING SITE / THREE DIRECTIONS</p><h1>One setup. Three perspectives.</h1></div><p>Compare each design on desktop and mobile.<br />Switch themes to explore both modes.</p></div>
+      <div class="controls">
+        <div class="directions" role="group" aria-label="Design direction">
+          {directions.map((direction) => <button data-direction={direction.id} aria-pressed={direction.id === 'relay'}><i style={`background:${direction.color}`}></i><span>{direction.name}<small>{direction.detail}</small></span></button>)}
+        </div>
+        <div class="view-controls">
+          <div class="segment" role="group" aria-label="Preview size"><button data-view="desktop" aria-pressed="true">Desktop</button><button data-view="mobile" aria-pressed="false">Mobile</button></div>
+          <div class="segment" role="group" aria-label="Color theme"><button data-theme="light" aria-pressed="true">Light</button><button data-theme="dark" aria-pressed="false">Dark</button></div>
+        </div>
+      </div>
+      <div class="preview-label"><span id="description">Relay · Clear structure. Connected machines. Cobalt blue.</span><span id="dimensions">1440 × 920</span></div>
+      <div class="stage" id="stage"><div id="frame-shell"><iframe id="preview" title="Relay design preview" src="/designs/relay?theme=light" width="1440" height="920"></iframe></div></div>
+      <p class="hint">Scroll inside the preview to explore the full page. All three designs include working theme controls.</p>
+    </main>
+  </body>
+</html>
+
+<script>
+  const descriptions = {
+    relay: 'Relay · Clear structure. Connected machines. Cobalt blue.',
+    current: 'Current · Expressive type. A continuous connection. Soft violet.',
+    workbench: 'Workbench · Compact tools. Visible status. Forest green.',
+  };
+  const frame = document.querySelector<HTMLIFrameElement>('#preview')!;
+  const shell = document.querySelector<HTMLElement>('#frame-shell')!;
+  const stage = document.querySelector<HTMLElement>('#stage')!;
+  const openLink = document.querySelector<HTMLAnchorElement>('#open-design')!;
+  let direction: keyof typeof descriptions = 'relay';
+  let view = 'desktop';
+  let theme = 'light';
+
+  function resizePreview() {
+    const width = view === 'mobile' ? 390 : 1440;
+    const height = view === 'mobile' ? 844 : 920;
+    const scale = Math.min(1, stage.clientWidth / width);
+    frame.width = String(width);
+    frame.height = String(height);
+    frame.style.transform = `scale(${scale})`;
+    shell.style.width = `${width * scale}px`;
+    shell.style.height = `${height * scale}px`;
+    document.querySelector('#dimensions')!.textContent = `${width} × ${height}`;
+  }
+
+  function updatePreview() {
+    frame.src = `/designs/${direction}?theme=${theme}`;
+    frame.title = `${direction[0].toUpperCase() + direction.slice(1)} design preview`;
+    openLink.href = frame.src;
+    document.querySelector('#description')!.textContent = descriptions[direction];
+    document.querySelectorAll<HTMLButtonElement>('[data-direction]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.direction === direction)));
+    document.querySelectorAll<HTMLButtonElement>('[data-view]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === view)));
+    document.querySelectorAll<HTMLButtonElement>('[data-theme]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.theme === theme)));
+    resizePreview();
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-direction]').forEach(button => button.addEventListener('click', () => {
+    direction = button.dataset.direction as keyof typeof descriptions;
+    updatePreview();
+  }));
+  document.querySelectorAll<HTMLButtonElement>('[data-view]').forEach(button => button.addEventListener('click', () => {
+    view = button.dataset.view!;
+    updatePreview();
+  }));
+  document.querySelectorAll<HTMLButtonElement>('[data-theme]').forEach(button => button.addEventListener('click', () => {
+    theme = button.dataset.theme!;
+    updatePreview();
+  }));
+  window.addEventListener('message', event => {
+    if (event.origin !== location.origin || event.source !== frame.contentWindow || event.data?.type !== 'tether-theme') return;
+    theme = event.data.theme;
+    openLink.href = `/designs/${direction}?theme=${theme}`;
+    document.querySelectorAll<HTMLButtonElement>('[data-theme]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.theme === theme)));
+  });
+  new ResizeObserver(resizePreview).observe(stage);
+</script>
+
+<style>
+  :global(*) { box-sizing: border-box; }
+  :global(body) { margin: 0; background: #edf0f3; color: #202733; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  header { height: 68px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d2d8e0; background: #fff; }
+  a { color: inherit; text-decoration: none; font-size: 13px; }
+  .brand { font-size: 24px; font-weight: 750; letter-spacing: -1px; }
+  .brand span { font-size: 13px; font-weight: 450; color: #68717d; letter-spacing: 0; margin-left: 10px; }
+  main { max-width: 1600px; margin: auto; padding: 32px; }
+  .intro { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 24px; }
+  .eyebrow { font-size: 10px; font-weight: 650; letter-spacing: 1.5px; color: #65717e; }
+  h1 { font-size: 28px; font-weight: 550; letter-spacing: -.8px; margin: 8px 0; }
+  .intro > p { color: #65717e; font-size: 13px; line-height: 1.6; }
+  .controls { display: flex; gap: 24px; align-items: center; justify-content: space-between; }
+  .directions { display: flex; gap: 8px; flex: 1; }
+  button { font: inherit; cursor: pointer; color: inherit; }
+  .directions button { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid #d2d8e0; border-radius: 9px; text-align: left; background: transparent; flex: 1; font-size: 14px; }
+  .directions button[aria-pressed='true'] { background: #fff; border-color: #8b98aa; box-shadow: 0 2px 3px #18263b08; }
+  i { width: 9px; height: 28px; border-radius: 3px; flex-shrink: 0; }
+  small { display: block; font-size: 10px; color: #68717d; margin-top: 5px; }
+  .view-controls { display: flex; gap: 10px; }
+  .segment { display: flex; padding: 3px; background: #e0e5eb; border-radius: 7px; }
+  .segment button { background: transparent; border: none; border-radius: 4px; padding: 9px 11px; font-size: 12px; }
+  .segment button[aria-pressed='true'] { background: #fff; box-shadow: 0 1px 3px #18263b15; }
+  .preview-label { margin: 24px 0 12px; display: flex; justify-content: space-between; gap: 16px; font-size: 11px; color: #65717e; }
+  #dimensions { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .stage { width: 100%; min-width: 0; display: flex; justify-content: center; }
+  #frame-shell { overflow: hidden; border-radius: 8px; box-shadow: 0 8px 35px #28364918, 0 0 0 1px #c8d0db; background: #fff; }
+  iframe { display: block; border: 0; transform-origin: top left; max-width: none; }
+  .hint { font-size: 11px; color: #65717e; text-align: center; margin: 18px 0 0; }
+  :global(:focus-visible) { outline: 3px solid #3568df; outline-offset: 3px; }
+  @media (max-width: 1100px) { .controls { flex-wrap: wrap; gap: 14px; } .directions { flex-basis: 100%; } .view-controls { margin-left: auto; } }
+  @media (max-width: 600px) { header { padding: 0 16px; } main { padding: 20px 16px; } .intro { display: block; } h1 { font-size: 24px; } .intro > p { font-size: 12px; } .directions button { padding: 12px 9px; gap: 7px; font-size: 12px; } small { display: none; } i { height: 20px; width: 5px; } .brand span { font-size: 11px; } #open-design { font-size: 11px; } .view-controls { width: 100%; justify-content: space-between; } .preview-label { font-size: 10px; } }
+</style>

@@ -1,0 +1,14 @@
+---
+import Icon from './Icon.astro';
+---
+
+<figure class="network-diagram diagram" aria-label="Two machines sync encrypted dotfiles through your Git repository">
+  <div class="diagram-label"><span>YOUR SYNC NETWORK</span><span><i class="status-dot"></i> Connected</span></div>
+  <div class="network-device device-left"><Icon name="laptop" size={38} /><strong>Work laptop</strong><span>macOS</span><div class="device-check"><Icon name="check" size={12} /> Synced</div></div>
+  <div class="network-device device-right"><Icon name="monitor" size={38} /><strong>Home desktop</strong><span>macOS</span><div class="device-check"><Icon name="check" size={12} /> Synced</div></div>
+  <svg class="network-lines" viewBox="0 0 540 425" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="M133 200V222Q133 246 160 246H244M407 200V222Q407 246 380 246H296" /><circle cx="183" cy="246" r="3" /><circle cx="355" cy="246" r="3" /></svg>
+  <div class="repo-node"><Icon name="git" size={28} /></div>
+  <div class="repo-caption"><strong>Your Git repo</strong><span><Icon name="lock" size={12} /> Encrypted dotfiles</span></div>
+  <div class="file-strip"><span>.zshrc</span><span>.gitconfig</span><span>packages</span></div>
+  <figcaption class="diagram-caption"><span>Local files → Encrypt → Git → Your machines</span><span>↔</span></figcaption>
+</figure>

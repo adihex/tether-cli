@@ -1,17 +1,20 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import Code from '../../components/Code.astro';
+import FlowDiagram from '../../components/FlowDiagram.astro';
+import ProfileDiagram from '../../components/ProfileDiagram.astro';
 ---
 
 <DocsLayout
-  title="Documentation - Tether CLI"
-  description="Complete documentation for Tether CLI"
+  title="Documentation — Tether CLI"
+  description="Install Tether, connect your machines, and manage dotfiles, packages, profiles, and team sync."
 >
   <!-- Introduction -->
   <section id="introduction">
-    <h1>Tether CLI Documentation</h1>
+    <p class="eyebrow">YOUR GUIDE TO A CONNECTED ENVIRONMENT</p>
+    <h1>Get your machines<br /><em>on the same page.</em></h1>
     <p>
-      Tether is an open source tool that automatically syncs your development environment—dotfiles and packages—across multiple machines with end-to-end encryption.
+      Tether syncs dotfiles and packages across your machines through Git. It encrypts dotfiles by default and keeps package manifests readable.
     </p>
     <h3>Key Features</h3>
     <ul>
@@ -20,7 +23,7 @@ import Code from '../../components/Code.astro';
       <li><strong>Machine Profiles</strong> — Per-machine control over which dotfiles and packages sync</li>
       <li><strong>Project Configs</strong> — Sync .env files and IDE settings across machines by Git remote</li>
       <li><strong>Package Manager Support</strong> — Syncs Homebrew, npm, pnpm, bun, gem, and uv packages</li>
-      <li><strong>Secret Detection</strong> — Prevents accidental syncing of API keys and credentials</li>
+      <li><strong>Secret Detection</strong> — Scans for potential API keys and credentials before syncing</li>
       <li><strong>Git-Backed</strong> — Full version history and rollback capabilities</li>
       <li><strong>Team Secrets</strong> — Share encrypted secrets across teams with age encryption</li>
     </ul>
@@ -36,7 +39,7 @@ import Code from '../../components/Code.astro';
 brew install tether-cli`} />
     <h3>Requirements</h3>
     <ul>
-      <li><strong>Platform:</strong> macOS (Linux coming soon)</li>
+      <li><strong>Platform:</strong> macOS; Linux support is in beta</li>
       <li><strong>Shell:</strong> zsh or bash</li>
       <li><strong>Git:</strong> Configured with GitHub, GitLab, or self-hosted Git server</li>
     </ul>
@@ -47,7 +50,7 @@ brew install tether-cli`} />
   <!-- Quick Start -->
   <section id="quick-start">
     <h2>Quick Start</h2>
-    <p>Get up and running in under a minute:</p>
+    <p>Connect your first machine, then add the next one.</p>
     <h3>1. Initialize</h3>
     <Code code="tether init" />
     <p>Follow the prompts to configure your Git repository and encryption passphrase.</p>
@@ -67,12 +70,17 @@ tether init --repo git@github.com:username/dotfiles.git`} />
     <h2>How It Works</h2>
     <h3>Architecture</h3>
     <p>
-      Tether uses a Git repository as the sync backend. When you make changes to dotfiles or install packages, the background daemon detects these changes, encrypts your dotfiles with AES-256-GCM, and pushes them to your private Git repository.
+      Tether uses your Git repository to connect machines. The daemon detects changes and encrypts dotfiles before pushing them to Git.
     </p>
     <p>
       On your other machines, Tether pulls these changes and applies them automatically.
     </p>
     <h3>Sync Flow</h3>
+    <FlowDiagram label="FROM YOUR MACHINE TO YOUR REPO" caption="Other machines pull these changes, decrypt the dotfiles, and apply them locally." steps={[
+      { icon: 'file', title: 'Scan changes', detail: 'Check files and package manifests' },
+      { icon: 'lock', title: 'Encrypt dotfiles', detail: 'Use your local encryption key' },
+      { icon: 'git', title: 'Sync through Git', detail: 'Commit and push to your repo' },
+    ]} />
     <ol>
       <li>Daemon detects file changes (every 5 minutes or manual <code>tether sync</code>)</li>
       <li>Secret scanner checks for credentials</li>
@@ -472,6 +480,7 @@ enabled = false`} />
   <!-- Machine Profiles -->
   <section id="machine-profiles">
     <h2>Machine Profiles</h2>
+    <ProfileDiagram />
     <p>
       Profiles let you control which dotfiles and packages sync to each machine. For example, a "work" profile might include IDE configs that your "server" profile doesn't need.
     </p>
@@ -703,7 +712,7 @@ tether daemon logs`} />
 tether unlock
 
 # Check if key exists
-ls ~/.tether/sync/.tether-key.age`} />
+ls ~/.tether/sync/encryption.key.age`} />
 
     <h3>"Secret detected" blocking sync</h3>
     <p>Either remove the secret or add an ignore pattern:</p>
